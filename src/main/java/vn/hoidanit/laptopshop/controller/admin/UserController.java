@@ -93,10 +93,14 @@ public class UserController {
     }
 
     @PostMapping("/admin/user/update")
-    public String postUpdateUser(Model model, @ModelAttribute("user") User ngocanh) {
-        // List<User> users = this.userService.getAllUsers();\
+    public String postUpdateUser(Model model, @ModelAttribute("user") User ngocanh,
+            @RequestParam("ngocAnhFile") MultipartFile file) {
         User user = this.userService.getUserById(ngocanh.getId());
+        String avatar = this.uploadService.handleUploadFile(file, "avatar");
+
         if (user != null) {
+            user.setAvatar(avatar);
+            user.setRole(this.userService.findRolebyName(ngocanh.getRole().getName()));
             user.setPhone(ngocanh.getPhone());
             user.setAddress((ngocanh.getAddress()));
             user.setFullName(ngocanh.getFullName());
