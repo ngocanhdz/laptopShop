@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
     private final UserService userService;
     private final UploadService uploadService;
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public UserController(UserService userService, UploadService uploadService,
             PasswordEncoder passwordEncoder) {
@@ -29,17 +29,18 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("/") // auto la lay data tu model sang view
-    public String getHomePage(Model model) {
-        String test = this.userService.handleHello();
-        List<User> arrUsers = this.userService.getAllUsersByEmail("tnanhh@gmail.com");
-        System.out.println(arrUsers);
-        model.addAttribute("eric", test);
-        model.addAttribute("ngocanh", "from ngoc anh value");
-        String users = " danh sach users";
-        model.addAttribute("users", users);
-        return "hello";
-    }
+    // @GetMapping("/") // auto la lay data tu model sang view
+    // public String getHomePage(Model model) {
+    // String test = this.userService.handleHello();
+    // List<User> arrUsers =
+    // this.userService.getAllUsersByEmail("tnanhh@gmail.com");
+    // System.out.println(arrUsers);
+    // model.addAttribute("eric", test);
+    // model.addAttribute("ngocanh", "from ngoc anh value");
+    // String users = " danh sach users";
+    // model.addAttribute("users", users);
+    // return "hello";
+    // }
 
     @GetMapping("/admin/user/create") // doi sang post de lay data tu view sang model
     public String getCreateUserPage(Model model) {
