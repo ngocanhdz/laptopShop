@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.validation.Valid;
 
 @Controller
 public class UserController {
@@ -52,15 +55,23 @@ public class UserController {
     @PostMapping(value = "/admin/user/create") // doi sang post de lay data tu view
                                                // sang
     // model
-    public String createUserPage(Model model, @ModelAttribute("newUser") User ngocanh,
+    public String createUserPage(Model model, @Valid @ModelAttribute("newUser") User ngocanh,
+            BindingResult newUserBindingResult,
             @RequestParam("ngocAnhFile") MultipartFile file) {
         // relative path: absolute path
-
+        List<FieldError> errors = newUserBindingResult.getFieldErrors();
+        for (FieldError error : errors) {
+            System.out.println(error.getField() + " - " + error.getDefaultMessage());
+        }
+        if (newUserBindingResult.hasErrors()) {
+            return "/admin/user/create";
+        }
         String name = this.uploadService.handleUploadFile(file, "avatar");
         String hashPassWord = this.passwordEncoder.encode(ngocanh.getPassword());
         ngocanh.setAvatar(name);
         ngocanh.setPassword(hashPassWord);
         ngocanh.setRole(this.userService.findRolebyName(ngocanh.getRole().getName()));
+
         this.userService.handleSaveUser(ngocanh);
         return "redirect:/admin/user";
     }
